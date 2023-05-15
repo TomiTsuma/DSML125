@@ -44,9 +44,18 @@ def checkPrevModel():
     models = []
     for model in path_to_model.rglob("*/std/"):
         models.append(model.parent.name)
-    chemicals.append('123')
 
     print(set(chemicals).issubset(models))
+
+
+def checkUncleanedWtchemData():
+    path = Path("inputFiles")
+    uncleanedWetchemDir = path.rglob("all_wetchem_data_uncleaned_*.csv")
+    file = None
+    for f in (uncleanedWetchemDir):
+        file = f
+
+    return (file.name)
 
 
 checkPrevModel()
