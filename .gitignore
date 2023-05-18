@@ -1,0 +1,12 @@
+*.csv
+*.O
+*.xlsx
+*.zip
+*.png
+*.rds
+/.dvc/
+
+/DSML87/
+/DSML94/
+/MSSC_DVC/
+/QC_Model_Predictions/
