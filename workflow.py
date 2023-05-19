@@ -4,11 +4,12 @@ from data.getValidAverSpectra import getValidAver, getSpectraforModeling
 from notebook import run_notebook
 import pandas as pd
 import shutil
+import numpy as np
 
 
 def call(modeling_instructions, phone_number, evaluation_instructions):
     """Get Repos"""
-    # subprocess.run("bash repos.sh")
+    # subprocess.run(f"{os.getcwd()}/repos.sh")
 
     """Copy spc to DSML87"""
     # shutil.copy("outputFiles/spectraldata.csv", "DSML87/inputFiles")
@@ -61,15 +62,22 @@ def call(modeling_instructions, phone_number, evaluation_instructions):
     # subprocess.run("bash dvc_setup.sh")
     # os.chdir("../")
 
-    """DO Setups"""
-    subprocess.run('Invoke-WebRequest https://github.com/digitalocean/doctl/releases/download/v1.94.0/doctl-1.94.0-windows-amd64.zip -OutFile ~\doctl-1.94.0-windows-amd64.zip')
+    """Run model optimization update"""
 
-    # """Run model optimization update"""
+    chem_df = pd.read_csv(
+        "inputFiles/2024-04-28_modeling-instructions_v2.5.csv")
+    chemicals = chem_df['chemical'].values
     # os.chdir("dl")
-    # chem_df = pd.read_csv(
-    #     "inputFiles/2024-04-28_modeling-instructions_v2.5.csv")
-    # chemicals = chem_df['chemical'].values
-    # subprocess.run("bash dl_spinner.sh")
+    # for chem in chemicals:
+    #     command = ["bash", f"{os.getcwd()}/dl_spinner.sh", chem]
+    #     subprocess.run(command, check=True)
+    #     break
+
+    cmd = ['doctl', 'compute', 'droplet', 'list',
+           '--format', "PublicIPv4", '--no-header']
+    res = subprocess.run(cmd, check=True, capture_output=True, text=True)
+    res = str(res.stdout).split('\n')[:len(chemicals)]
+    print(f"The IP Addresses {(res)}++++++++ ")
 
     # """
     # Retrieve results
