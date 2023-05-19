@@ -54,7 +54,7 @@ def getValidAver():
 
 
 def getSpectraforModeling(sample_codes):
-    spc = pd.read_csv("outputFiles/spectraldata.csv")
+    spc = pd.read_csv("outputFiles/spectraldata.csv", index_col=0)
     spc = spc.loc[(spc.index.isin(sample_codes))]
 
     return spc
