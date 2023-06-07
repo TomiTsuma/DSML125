@@ -4,6 +4,7 @@
 *.zip
 *.png
 *.rds
+*.tar.gz
 /.dvc/
 
 /DSML87/
