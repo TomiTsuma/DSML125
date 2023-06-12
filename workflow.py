@@ -45,7 +45,6 @@ def call(modeling_instructions, phone_number, evaluation_instructions):
     # print(spc.index)
     # spc.to_csv('/home/tom/DSML125/DSML87/outputFiles/spc.csv')
     # wetchem.to_csv('/home/tom/DSML125/DSML87/outputFiles/wetchem.csv')
-
     """Train Test Split"""
     # subprocess.run(['bash', 'r_installation.sh'], check=True)
     # subprocess.run(['sudo','Rscript','/home/tom/DSML125/DSML87/splits.r'])
@@ -62,61 +61,55 @@ def call(modeling_instructions, phone_number, evaluation_instructions):
     # shutil.copytree("outputFiles/spc", "MSSC_DVC/spc")
     # shutil.copytree("outputFiles/wetchem", "MSSC_DVC/wetchem")
     # shutil.copytree("outputFiles/splits", "MSSC_DVC/splits")
-    os.chdir(f"{os.getcwd()}/MSSC_DVC")
+    # os.chdir(f"{os.getcwd()}/MSSC_DVC")
     # subprocess.run(['zip', '-r', 'data.zip', 'spc', 'wetchem', 'splits'], check=True)
 
-    subprocess.run(['bash', 'dvc_setup.sh'])
-    os.chdir("../")
+    # subprocess.run(['bash', 'dvc_setup.sh'])
+    # os.chdir("../")
 
-    """Run model optimization update"""
+    # """Run model optimization update"""
 
     chem_df = pd.read_csv(
         "inputFiles/2024-04-28_modeling-instructions_v2.5.csv")
     chemicals = chem_df['chemical'].values
-    os.chdir("dl")
-    for chem in chemicals:
-        command = ["bash", f"{os.getcwd()}/dl_spinner.sh", chem]
-        subprocess.run(command, check=True)
-    
-    
+    # os.chdir("dl")
+    ips = ['157.245.71.196']
+    # for chem in chemicals:
+    #     command = ["bash", f"{os.getcwd()}/dl_spinner.sh", chem]
+    #     ip = subprocess.check_output(command, universal_newlines=True)
+    #     ip = ip.split('\n')[-2]
+    #     ips.append(ip)
 
-    # cmd = ['doctl', 'compute', 'droplet', 'list',
-    #        '--format', "PublicIPv4", '--no-header']
-    # res = subprocess.run(cmd, check=True, capture_output=True, text=True)
-    # print((chemicals))
-    # res = str(res.stdout).split('\n')
-    # res = [x for x in res if len(x.split(".")) == 4]
-    # res = res[-len(chemicals):]
-    # print(f"The IP Addresses {(res)}++++++++ ")
-    # print(chemicals)
+    # os.chdir("../")
+    for ip, chemical in zip(ips, chemicals):
+        print(ip)
+        subprocess.run(
+            ['bash', f"{os.getcwd()}/remotedatacollector.sh", "--server", ip, "--chemical", chemical])
 
-    # """
-    # Retrieve models & Evaluate
-    # """
-    # print("Current working dir", os.listdir())
-    # for chem, ip in zip(chemicals, res):
-    #     collection.scpConnection(ip, chem)
-    #     test_sample_codes = pd.read_csv(
-    #         f"outputFiles/splits/{chem}_test_sample_codes")
-    #     test_sample_codes = test_sample_codes['x'].values
-    #     test_spc = pd.read_csv("outputFiles/spc/spc.csv", index_col=0)
-    #     test_spc = test_spc.loc[test_spc.index.isin(test_sample_codes)]
-    #     test_wetchem = pd.read_csv(
-    #         "outputFiles/wetchem/wetchem.csv", index_col=0)
-    #     test_wetchem = test_wetchem.loc[test_wetchem.index.isin(
-    #         test_sample_codes)]
-    #     test_spc.to_csv(f"outputFiles/{chem}_test_spc.csv")
-    #     test_wetchem.to_csv(f"outputFiles/{chem}_test_wetchem.csv")
+        test_sample_codes = pd.read_csv(
+            f"{os.getcwd()}/outputFiles/splits/{chemical}_test_sample_codes.csv")
+        test_sample_codes = test_sample_codes['x'].values
+        test_spc = pd.read_csv(
+            f"{os.getcwd()}/outputFiles/spc/spc.csv", index_col=0)
+        test_spc = test_spc.loc[test_spc.index.isin(test_sample_codes)]
+        test_wetchem = pd.read_csv(
+            f"{os.getcwd()}/outputFiles/wetchem/wetchem.csv", index_col=0)
+        test_wetchem = test_wetchem.loc[test_wetchem.index.isin(
+            test_sample_codes)]
+        test_spc.to_csv(f"{os.getcwd()}/outputFiles/{chemical}_test_spc.csv")
+        test_wetchem.to_csv(
+            f"{os.getcwd()}/outputFiles/{chemical}_test_wetchem.csv")
 
-    #     os.makedirs("outputFiles/predictions", exist_ok=True)
-    #     evaluate.eval(
-    #         [chem],
-    #         f"outputFiles/{chem}_test_spc.csv",
-    #         f"outputFiles/{chem}_test_wetchem.csv",
-    #         "outputFiles/predictions",
-    #         ['model_versions'],
-    #         f"EvaluationTool/{chem}",
-    #         "outputFiles/predictions")
+        os.makedirs("outputFiles/predictions", exist_ok=True)
+        evaluate.eval(
+            [chemical],
+            f"{os.getcwd()}/outputFiles/{chemical}_test_spc.csv",
+            f"{os.getcwd()}/outputFiles/{chemical}_test_wetchem.csv",
+            f"{os.getcwd()}/outputFiles/predictions",
+            ['DLv2.6'],
+            f"{os.getcwd()}/outputFiles/saved_model/saved_models",
+            "outputFiles/predictions",
+            "tom")
 
     # os.chdir(f"{os.getcwd()}/MSSC_DVC")
     # subprocess.run(['rm', '-rf', 'spc'])
