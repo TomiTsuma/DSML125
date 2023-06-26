@@ -43,7 +43,7 @@ def convertSpectra(df):
 def getValidAver():
     conn, cur = get_db_cursor()
     spectra = pd.read_sql(
-        "SELECT spectraldata.metadata_id, averaged_spectra, mandatorymetadata.sample_code  FROM spectraldata INNER JOIN mandatorymetadata ON mandatorymetadata.metadata_id = spectraldata.metadata_id WHERE (is_finalized=True AND (passed=True AND is_active=True AND averaged=True)) LIMIT 100", con=conn)
+        "SELECT spectraldata.metadata_id, averaged_spectra, mandatorymetadata.sample_code  FROM spectraldata INNER JOIN mandatorymetadata ON mandatorymetadata.metadata_id = spectraldata.metadata_id WHERE (is_finalized=True AND (passed=True AND is_active=True AND averaged=True)) LIMIT 5000", con=conn)
     conn.close()
     print(len(spectra.index))
     spectra = spectra[['sample_code', 'averaged_spectra']]

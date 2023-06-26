@@ -6,6 +6,7 @@ ACCOUNT_USERNAME=tom
 # SERVER_ARRAY=($(echo $IPS | cut -d' ' -f 3-50))
 chemical=""
 server=""
+version=""
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
@@ -17,6 +18,10 @@ while [[ $# -gt 0 ]]; do
             server="$2"
             shift
             ;;
+        --version)
+            version="$2"
+            shift
+            ;;
         *)
             # Invalid flag
             echo "Invalid flag: $key"
@@ -26,11 +31,14 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
+echo ${server}
+echo ${chemical}
+echo ${version}
 
-MODEL_OUTPUT_DIR=data_input/MSSC_DVC/output/saved_model/saved_models/$chemical/std
+MODEL_OUTPUT_DIR=data_input/MSSC_DVC/output/saved_model/saved_models/${chemical}/std
 FILE_PATTERN="model.hdf5"
 
-LOCAL_DIR=/home/tom/DSML125/outputFiles/saved_model/saved_models/${chemical}
+LOCAL_DIR=/home/tom/DSML125/QC_Model_Predictions/dl_models_all_chems_20210414/${version}/${chemical}
 
 mkdir --parents ${LOCAL_DIR}
 
@@ -51,24 +59,23 @@ fi
 
 ssh -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null -o "StrictHostKeyChecking no" "${LOGIN_USERNAME}@${server}" "if [ -d '/home/${ACCOUNT_USERNAME}/${MODEL_OUTPUT_DIR}' ]; then exit 0; else exit 1; fi" >/dev/null 2>&1
 
+sleep 300
+
 if [ $? -eq 0 ] 
 then
   scp -r ${LOGIN_USERNAME}@${server}:/home/${ACCOUNT_USERNAME}/${MODEL_OUTPUT_DIR} ${LOCAL_DIR}
 else
-  echo "Watching files on server " ${server}
   ( ssh -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null -o "StrictHostKeyChecking no" ${LOGIN_USERNAME}@${server} inotifywait -e close_write,moved_to,create -m /home/${ACCOUNT_USERNAME}/${MODEL_OUTPUT_DIR} |
     while read -r directory events filename; do
       echo ${server} ${directory} ${events} ${filename}
       if [[ ${filename} =~ ${FILE_PATTERN} ]]
       then
-        echo ${FILE_PATTERN}
-        echo ${filename}
-
         if [[ ${events} =~ "CLOSE_WRITE" ]]
         then
         filename=$(printf '%q' "$filename")
         echo "Detected: " ${server} ${directory} ${events} ${filename}
         scp -r ${LOGIN_USERNAME}@${server}:/home/${ACCOUNT_USERNAME}/${MODEL_OUTPUT_DIR} ${LOCAL_DIR}/${chemical}
+        wait
         break
         fi
       fi
