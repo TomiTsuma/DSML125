@@ -33,6 +33,30 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
         "past", "-".join([str(j) for j in dataAvailable if (len(i.split("-")) > 1 and float(j) < float(i.split("-")[1]))])) for i in dataUsed]
     dataUsed = [[f"v{j}" for j in i.split("-")] for i in dataUsed]
 
+    # Ensure that the versions of data and models specified are present. Otherwise make sure to break
+    print(dataUsed)
+    print([i.split("-") for i in modelsUsed])
+    dataAvailable = [i for i in os.listdir('/home/tom/DSML125/models in production')]
+    modelsAvailable = [i for i in os.listdir('/home/tom/DSML125/QC_Model_Predictions/dl_models_all_chems_20210414')]
+    print(dataAvailable)
+    print(modelsAvailable)
+
+
+    dataUnavailable = [version for version in [i for j in dataUsed for i in j] if version not in dataAvailable]
+    modelsUnavailable = [version for version in [i for j in [i.split("-") for i in modelsUsed] for i in j] if version not in modelsAvailable]
+
+    print(dataUnavailable)
+    print(modelsUnavailable)
+    if(len(dataUnavailable) > 0):
+        for phone in phone_numbers:
+            print(phone)
+            subprocess.run(["python", "sms.py", "--phone", f"{phone}", "--message", f"The following data is unavailable {str(','.join(dataUnavailable))}"])
+        return
+    if(len(modelsUnavailable) > 0):
+        for phone in phone_numbers:
+            subprocess.run(["python", "sms.py", "--phone", f"{phone}", "--message", f"The following models are unavailable {str(','.join(modelsUnavailable))}"])
+        return
+    return
     logging.info(f"Data Used", str(dataUsed))
 
     """Preliminary Actions"""
