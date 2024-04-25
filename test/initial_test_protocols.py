@@ -23,7 +23,7 @@ def checkPhone():
 
 def checkPrevModelSplits():
     patterns = ['train', 'test', 'valid']
-    path = Path("./inputFiles/models in production")
+    path = Path("./inputFiles/models_in_production")
     splits = []
     for pattern in patterns:
         for file in path.rglob(f'*_{pattern}_sample_codes.csv'):

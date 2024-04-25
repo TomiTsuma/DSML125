@@ -4,6 +4,6 @@ import shutil
 
 
 def retrieve_splits():
-    path = Path("Z://ML/models in production/")
-    os.makedirs("./inputFiles/models in production", exist_ok=True)
-    shutil.copy(path, "./inputFiles/models in production")
+    path = Path("Z://ML/models_in_production/")
+    os.makedirs("./inputFiles/models_in_production", exist_ok=True)
+    shutil.copy(path, "./inputFiles/models_in_production")

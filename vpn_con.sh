@@ -4,8 +4,18 @@ if ! command -v openvpn &> /dev/null; then
     sudo apt install openvpn
 fi
 
+connect_to_vpn() {
+    sudo openvpn --config /home/tom/DSML125/sslvpn-tsuma-client-config.ovpn --auth-user-pass credentials.txt &
+    echo "Connecting to VPN..."
+    sleep 10 # Adjust sleep time as needed for the connection to establish
+    echo "VPN connected successfully."
+}
 
-sudo openvpn --config tsuma__ssl_vpn_config.ovpn --auth-user-pass credentials.txt
+# Main function
+main() {
+    echo "Starting VPN connection..."
+    connect_to_vpn
+}
 
-
-rsync -avz --progress "http://192.168.5.5:5000/volume1/CNLS/Data Science/ML/models in production" "/home/tom/DSML125/inputFiles"
+# Execute main function
+main

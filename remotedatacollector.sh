@@ -1,5 +1,5 @@
 #!/bin/bash
-LOGIN_USERNAME=root
+LOGIN_USERNAME=tom
 ACCOUNT_USERNAME=tom
 # IPS=$(doctl compute droplet list --format "PublicIPv4")
 
@@ -59,7 +59,7 @@ fi
 
 ssh -o GlobalKnownHostsFile=/dev/null -o UserKnownHostsFile=/dev/null -o "StrictHostKeyChecking no" "${LOGIN_USERNAME}@${server}" "if [ -d '/home/${ACCOUNT_USERNAME}/${MODEL_OUTPUT_DIR}' ]; then exit 0; else exit 1; fi" >/dev/null 2>&1
 
-sleep 300
+# sleep 300
 
 if [ $? -eq 0 ] 
 then

@@ -5,7 +5,9 @@
 *.png
 *.rds
 *.tar.gz
+*.pyc
 /.dvc/
+__pycache__/notebook.cpython-38.pyc
 
 /DSML87/
 /DSML94/

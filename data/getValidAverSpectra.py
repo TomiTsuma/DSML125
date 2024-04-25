@@ -2,7 +2,16 @@ import psycopg2
 import pandas as pd
 import ast
 import numpy as np
+from sqlalchemy import create_engine
 
+def sqlalchemy_connection():
+    username = "doadmin"
+    password = 'yzmodwh2oh16iks6'
+    host = 'db-postgresql-cl1-do-user-2276924-0.db.ondigitalocean.com'
+    port = 25060
+    database = 'MandatoryMetadata'
+    schema = 'historical'
+    engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}/{database}')
 
 def get_db_cursor():
     username = "doadmin"
@@ -24,39 +33,63 @@ conn, cur = get_db_cursor()
 
 
 def convertSpectra(df):
-    _ = df.to_dict()
-    df_2 = pd.DataFrame()
-    df_2["sample_id"] = _['averaged_spectra'].keys()
-    df_2 = df_2.set_index("sample_id")
+    print("Converting spectra")
+    df_ = pd.DataFrame([i[[i for i in i.keys()][0]] for i in df['averaged_spectra'].values],columns = np.arange(522,3977,2))
+    df_.index = df.index
+    print("Spectra converted")
+    return df_
 
-    for sample in list(_['averaged_spectra'].keys()):
-        spectra = _['averaged_spectra'][sample]
-        # spectra = ast.literal_eval(spectra)
-        key = list(spectra.keys())[0]
-        spectra_list = spectra[key]
-        for spectra_val, column in zip(spectra_list, np.arange(0, len(spectra_list)*2, 2)):
-            df_2.loc[df_2.index == sample, column+522] = spectra_val
+def getSpectralCodes():
+    query = f"SELECT DISTINCT mandatorymetadata.sample_code  FROM spectraldata INNER JOIN mandatorymetadata ON mandatorymetadata.metadata_id = spectraldata.metadata_id WHERE is_finalized=True AND passed=True AND is_active=True AND averaged=True"
 
-    return df_2
+    return pd.read_sql(query, con=conn)
 
-
-def getValidAver():
+def getValidAver(sample_codes, subset_count=None):
     conn, cur = get_db_cursor()
-    spectra = pd.read_sql(
-        "SELECT spectraldata.metadata_id, averaged_spectra, mandatorymetadata.sample_code  FROM spectraldata INNER JOIN mandatorymetadata ON mandatorymetadata.metadata_id = spectraldata.metadata_id WHERE (is_finalized=True AND (passed=True AND is_active=True AND averaged=True)) LIMIT 5000", con=conn)
+    spectra = pd.DataFrame(columns=['sample_code','averaged_spectra'])
+    # count = len(sample_codes)
+    if(len(sample_codes) < 5000):
+        count  = len(sample_codes)
+        step=count
+    elif(len(sample_codes) < 70000):
+        count = len(sample_codes)
+        step=5000
+    else:
+        count = 100000
+        step=5000
+    start = 0
+
+    for i in np.arange(start, count, step):
+        
+        print("Fetching spectra from {}".format(start))
+        samples = [i for i in sample_codes][start:start+step]
+        query = f"SELECT spectraldata.metadata_id, averaged_spectra, mandatorymetadata.sample_code  FROM spectraldata INNER JOIN mandatorymetadata ON mandatorymetadata.metadata_id = spectraldata.metadata_id WHERE is_finalized=True AND passed=True AND is_active=True AND averaged=True AND sample_code IN {str(samples).replace('[','(').replace(']',')')}"
+        
+        _ = pd.read_sql(query, con=conn)
+        spectra = pd.concat([spectra, _], axis=0)
+        start = start + step
+        if (count-step) > 5000:
+            step=5000
+        else:
+            step = count-step
+
     conn.close()
-    print(len(spectra.index))
     spectra = spectra[['sample_code', 'averaged_spectra']]
     spectra = spectra.set_index('sample_code')
     spectra = convertSpectra(spectra)
-    spectra.to_csv("outputFiles/spectraldata.csv")
+
+
+    spectra.to_csv("/home/tom/DSML125/DSML87/outputFiles/spectraldata.csv")
+    spectra.to_csv("/home/tom/DSML125/outputFiles/spectraldata.csv")
 
     return spectra
 
 
 def getSpectraforModeling(sample_codes):
-    spc = pd.read_csv("outputFiles/spectraldata.csv", index_col=0)
-    print(sample_codes)
+    spc = pd.read_csv(
+        "/home/tom/DSML125/DSML87/outputFiles/spc_no_residual_outliers.csv", index_col=0, engine='c')
     spc = spc.loc[(spc.index.isin(sample_codes))]
 
     return spc
+
+
