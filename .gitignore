@@ -8,7 +8,7 @@
 *.pyc
 /.dvc/
 __pycache__/notebook.cpython-38.pyc
-
+models in production/old/soil_alpha-drift_DL/002_2021-04-30/2021-04-01_global_dl_optimization_data.tar.gz
 /DSML87/
 /DSML94/
 /MSSC_DVC/
