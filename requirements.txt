@@ -11,8 +11,8 @@ matplotlib
 seaborn
 statsmodels
 openpyxl
-rpy2
 dvc
 dvc-s3
 pyodbc
 sqlalchemy
+pyopenssl==24.0.0

@@ -436,10 +436,10 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     print("Here are the available spc len ", len(availableSpc))
     
     """Connect to vpn"""
-    # subprocess.run(["bash", "vpn_con.sh"])
+    subprocess.run(["bash", "vpn_con.sh"])
 
     """Get previous splits"""
-    # retrieve_splits()
+    retrieve_splits()
     """
     Get all averaged spectra
     """
