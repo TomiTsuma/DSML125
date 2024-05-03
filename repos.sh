@@ -2,7 +2,7 @@
 
 DO_USERNAME=tom
 DO_GITHUB_USERNAME=TomiTsuma
-DO_GITHUB_TOKEN=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
+DO_GITHUB_TOKEN=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
 DO_GITHUB_EMAIL=tommytsuma7@gmail.com
 
 
