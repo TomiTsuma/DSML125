@@ -12,6 +12,3 @@ git clone https://${DO_GITHUB_TOKEN}@github.com/${DO_GITHUB_USERNAME}/DSML94
 git clone https://${DO_GITHUB_TOKEN}@github.com/${DO_GITHUB_USERNAME}/EvaluationTool
 git clone https://${DO_GITHUB_TOKEN}@github.com/${DO_GITHUB_USERNAME}/MSSC_DVC_V2.git MSSC_DVC
 git clone https://${DO_GITHUB_TOKEN}@github.com/Cropnuts/deep-learning-optimizer.git dl
-cd dl
-git checkout default-args
-cd ..
