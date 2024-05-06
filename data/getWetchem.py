@@ -27,7 +27,7 @@ def getWetchemLIMS(sample_codes=None, client=None, chemicals=None):
         'organic_carbon', 'cec',
         'sand', 'silt', 'clay'
     ]
-    conn_lims = pyodbc.connect("Driver={/opt/microsoft/msodbcsql18/lib64/libmsodbcsql-18.3.so.2.1};"
+    conn_lims = pyodbc.connect("Driver={/opt/microsoft/msodbcsql18/lib64/libmsodbcsql-18.3.so.3.1};"
                             "TrustServerCertificate=yes;"
                             "Server=192.168.5.18\CROPNUT;"
                             "Database=cropnuts;"
