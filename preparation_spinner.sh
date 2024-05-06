@@ -72,14 +72,17 @@ runcmd:
   - git config --global user.email "${DO_GITHUB_EMAIL}"
   - git clone https://${DO_GITHUB_TOKEN}@github.com/${DO_GITHUB_USERNAME}/DSML125.git DSML125
   - cd DSML125
-  - sudo apt-get install python3
-  - sudo apt -yq install python3-pip
-  - python3 -m pip install -r requirements.txt
   - export AWS_ACCESS_KEY_ID=${DO_AWS_ACCESS_KEY_ID}
   - export AWS_SECRET_ACCESS_KEY=${DO_AWS_ACCESS_KEY}
   - export USERNAME=${DO_USERNAME}
   - bash odbc_install.sh
   - bash repos.sh
+  - mkdir DSML87/inputFiles
+  - mkdir outputFiles
+  - bash r_installation.sh
+  - sudo apt-get install python3
+  - sudo apt -yq install python3-pip
+  - python3 -m pip install -r requirements.txt
 _EOF_
 )
 
@@ -87,4 +90,10 @@ echo "${DO_USER_DATA}" > /home/tom/DSML125/preparation.cloudinit
 
 
 ID=$(doctl compute droplet create trainer-dl --region ams3 --image ubuntu-20-04-x64 --size s-4vcpu-8gb --ssh-keys $DO_SSH_KEY --user-data-file /home/tom/DSML125/preparation.cloudinit --tag-name trainer-dl4-${tag} --format "ID" --no-header)
+echo ${ID}
+sleep 300
+IP=$(doctl compute droplet get $ID --format PublicIPv4 --no-header)
+echo ${IP}
+scp -r /home/tom/DSML125/inputFiles root@68.183.7.73:/home/tom/DSML125
+
 
