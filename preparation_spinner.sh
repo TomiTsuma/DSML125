@@ -102,7 +102,7 @@ ssh root@${IP} << 'EOF'
 
 while :
 do
-    if python3 -c "python3 -m notebook" &> /dev/null
+    if python3 -c "import notebook" &> /dev/null
     then
         echo "notebook is installed."
         python3 cli.py -m /home/tom/DSML125/inputFiles/modeling-instructions.csv -p /home/tom/DSML125/inputFiles/phone_numbers.csv -e /home/tom/DSML125/inputFiles/model_evaluation.csv -v v2.4

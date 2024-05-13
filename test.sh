@@ -1,23 +1,17 @@
 #!/bin/bash
 
-ssh root@68.183.7.73 << 'EOF'
+ssh root@159.223.230.245 << 'EOF'
+
 while :
 do
-    if cd /home/tom/DSML125/outputFiles/final &> /dev/null 
+    if python3 -c "python3 -m notebook" &> /dev/null
     then
+        echo "notebook is installed."
+        python3 cli.py -m /home/tom/DSML125/inputFiles/modeling-instructions.csv -p /home/tom/DSML125/inputFiles/phone_numbers.csv -e /home/tom/DSML125/inputFiles/model_evaluation.csv -v v2.4
         break
     else
-        echo "Not found"
-        sleep 5
+        echo "notebook is not installed."
     fi
+    sleep 5
 done
 EOF
-
-ssh root@68.183.7.73 "inotifywait -e create /home/tom/DSML125/outputFiles/final" | while read -r directory event file; 
-do
-        echo "File $file was created in $directory"
-        scp -r root@68.183.7.73:/home/tom/DSML125/outputFiles /home/tom/DSML125/outputFiles
-        break
-        # Add your custom logic here
-done
-
