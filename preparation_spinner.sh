@@ -75,11 +75,12 @@ runcmd:
   - export AWS_ACCESS_KEY_ID=${DO_AWS_ACCESS_KEY_ID}
   - export AWS_SECRET_ACCESS_KEY=${DO_AWS_ACCESS_KEY}
   - export USERNAME=${DO_USERNAME}
-  - bash odbc_install.sh
+  - sudo bash odbc_install.sh
   - bash repos.sh
   - mkdir DSML87/inputFiles
   - mkdir outputFiles
-  - bash r_installation.sh
+  - sudo bash r_installation.sh
+  - wait
   - sudo apt-get install python3
   - sudo apt -yq install python3-pip
   - python3 -m pip install -r requirements.txt
