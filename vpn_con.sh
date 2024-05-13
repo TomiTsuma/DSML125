@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if ! command -v openvpn &> /dev/null; then
-    sudo apt install openvpn
+    sudo apt install -y openvpn
 fi
 
 connect_to_vpn() {
