@@ -97,6 +97,20 @@ sleep 300
 IP=$(doctl compute droplet get $ID --format PublicIPv4 --no-header)
 echo ${IP}
 
+ssh root@${IP} << 'EOF'
+while :
+do
+    if cd /home/tom/DSML125/inputFiles &> /dev/null 
+    then
+        break
+    else
+        echo "DSML125 not created yet"
+        sleep 10
+    fi
+done
+EOF
+wait
+
 scp -r /home/tom/DSML125/inputFiles root@${IP}:/home/tom/DSML125/inputFiles
 wait
 ssh root@${IP} << 'EOF'
