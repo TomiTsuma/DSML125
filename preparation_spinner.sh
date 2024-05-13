@@ -71,6 +71,7 @@ runcmd:
   - git config --global user.name "${DO_GITHUB_USERNAME}"
   - git config --global user.email "${DO_GITHUB_EMAIL}"
   - git clone https://${DO_GITHUB_TOKEN}@github.com/${DO_GITHUB_USERNAME}/DSML125.git DSML125
+  - wait
   - cd DSML125
   - export AWS_ACCESS_KEY_ID=${DO_AWS_ACCESS_KEY_ID}
   - export AWS_SECRET_ACCESS_KEY=${DO_AWS_ACCESS_KEY}
@@ -97,15 +98,15 @@ IP=$(doctl compute droplet get $ID --format PublicIPv4 --no-header)
 echo ${IP}
 
 scp -r /home/tom/DSML125/inputFiles root@${IP}:/home/tom/DSML125
-
+wait
 ssh root@${IP} << 'EOF'
 
 while :
 do
-    if python3 -c "import notebook" &> /dev/null
+    if python3 -c "import notebook";
     then
         echo "notebook is installed."
-        python3 cli.py -m /home/tom/DSML125/inputFiles/modeling-instructions.csv -p /home/tom/DSML125/inputFiles/phone_numbers.csv -e /home/tom/DSML125/inputFiles/model_evaluation.csv -v v2.4
+        python3 /home/tom/DSML125/cli.py -m /home/tom/DSML125/inputFiles/modeling-instructions.csv -p /home/tom/DSML125/inputFiles/phone_numbers.csv -e /home/tom/DSML125/inputFiles/model_evaluation.csv -v v2.4
         break
     else
         echo "notebook is not installed."

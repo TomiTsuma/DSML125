@@ -19,7 +19,6 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from QC_Model_Predictions.predict import predict_chems
-from DSML87.split import split_data
 from DSML87.residual_outliers import residual_outliers
 
 today = datetime.datetime.now().strftime("%Y-%m-%d")
