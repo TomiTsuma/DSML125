@@ -97,7 +97,7 @@ sleep 300
 IP=$(doctl compute droplet get $ID --format PublicIPv4 --no-header)
 echo ${IP}
 
-scp -r /home/tom/DSML125/inputFiles root@${IP}:/home/tom/DSML125
+scp -r /home/tom/DSML125/inputFiles root@${IP}:/home/tom/DSML125/inputFiles
 wait
 ssh root@${IP} << 'EOF'
 
