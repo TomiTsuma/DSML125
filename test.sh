@@ -1,19 +1,23 @@
 #!/bin/bash
 
 ssh root@68.183.7.73 << 'EOF'
-
 while :
 do
-    if python3 -c "from pypdf import PdfReader" &> /dev/null
+    if cd /home/tom/DSML125/outputFiles/final &> /dev/null 
     then
-        echo "pypdf is installed."
         break
     else
-        echo "pypdf is not installed."
+        echo "Not found"
+        sleep 5
     fi
-
-    # Wait for some time before checking again (e.g., every 5 seconds)
-    sleep 5
 done
 EOF
+
+ssh root@68.183.7.73 "inotifywait -e create /home/tom/DSML125/outputFiles/final" | while read -r directory event file; 
+do
+        echo "File $file was created in $directory"
+        scp -r root@68.183.7.73:/home/tom/DSML125/outputFiles /home/tom/DSML125/outputFiles
+        break
+        # Add your custom logic here
+done
 

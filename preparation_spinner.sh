@@ -95,9 +95,9 @@ sleep 300
 IP=$(doctl compute droplet get $ID --format PublicIPv4 --no-header)
 echo ${IP}
 
-scp -r /home/tom/DSML125/inputFiles root@68.183.7.73:/home/tom/DSML125
+scp -r /home/tom/DSML125/inputFiles root@${IP}:/home/tom/DSML125
 
-ssh root@68.183.7.73 << 'EOF'
+ssh root@${IP} << 'EOF'
 
 while :
 do
@@ -114,5 +114,26 @@ done
 EOF
 
 
+
+ssh root@${IP} << 'EOF'
+while :
+do
+    if cd /home/tom/DSML125/outputFiles/final &> /dev/null 
+    then
+        break
+    else
+        echo "Not found"
+        sleep 5
+    fi
+done
+EOF
+
+ssh root@${IP} "inotifywait -e create /home/tom/DSML125/outputFiles/final" | while read -r directory event file; 
+do
+        echo "File $file was created in $directory"
+        scp -r root@${IP}:/home/tom/DSML125/outputFiles /home/tom/DSML125/outputFiles
+        break
+        # Add your custom logic here
+done
 
 

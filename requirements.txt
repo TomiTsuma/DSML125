@@ -11,7 +11,7 @@ matplotlib
 seaborn
 statsmodels
 openpyxl
-rpy2
+# rpy2
 dvc
 dvc-s3
 pyodbc

@@ -26,9 +26,14 @@ runcmd:
   - git config --global user.email "tommytsuma7@gmail.com"
   - git clone https://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@github.com/TomiTsuma/DSML125.git DSML125
   - cd DSML125
-  - sudo apt-get install python3
-  - sudo apt -yq install python3-pip
-  - pip install -r requirements.txt
   - export AWS_ACCESS_KEY_ID=DO00JVCF7VU9NR8R9KUC
   - export AWS_SECRET_ACCESS_KEY=qw7fwzXbo90pYNVgybQbodide616IklbcR21y6G8EOI
   - export USERNAME=tom
+  - bash odbc_install.sh
+  - bash repos.sh
+  - mkdir DSML87/inputFiles
+  - mkdir outputFiles
+  - bash r_installation.sh
+  - sudo apt-get install python3
+  - sudo apt -yq install python3-pip
+  - python3 -m pip install -r requirements.txt
