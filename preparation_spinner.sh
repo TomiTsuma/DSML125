@@ -111,7 +111,7 @@ done
 EOF
 wait
 
-scp -r /home/tom/DSML125/inputFiles root@${IP}:/home/tom/DSML125/inputFiles
+scp -r /home/tom/DSML125/inputFiles root@${IP}:/home/tom/DSML125
 wait
 ssh root@${IP} << 'EOF'
 
