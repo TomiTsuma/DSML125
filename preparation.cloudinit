@@ -35,6 +35,7 @@ runcmd:
   - mkdir DSML87/inputFiles
   - mkdir outputFiles
   - sudo bash r_installation.sh
+  - sudo bash vpn_con.sh
   - wait
   - sudo apt-get install python3
   - sudo apt -yq install python3-pip

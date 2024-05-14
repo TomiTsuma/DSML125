@@ -326,6 +326,7 @@ def evaluateResults():
 
 def call(modeling_instructions, phone_number, evaluation_instructions, version):
     gc.enable()
+    subprocess.run(['sudo', 'bash', '/home/tom/DSML125/r_installation.sh'])
 
     logging.basicConfig(filename='training.log', level=logging.INFO)
 
