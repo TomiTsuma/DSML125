@@ -649,8 +649,8 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     shutil.copyfile("/home/tom/DSML125/DSML87/outputFiles/dl_outliers.csv",f"/home/tom/DSML125/outputFiles/{today}_hv_outliers_{version}.csv")
     shutil.copyfile("/home/tom/DSML125/DSML87/outputFiles/dl_outliers.csv",f"/home/tom/DSML125/outputFiles/{today}_lv_outliers_{version}.csv")
     shutil.copyfile('/home/tom/DSML125/DSML87/outputFiles/wetchem.csv',f"/home/tom/DSML125/outputFiles/{today}_wetchem_{version}.csv")  
-    shutil.copy('/home/tom/DSML125/DSML87/outputFiles/preds',f"/home/tom/DSML125/outputFiles/preds")
-    
+    # shutil.copy('/home/tom/DSML125/DSML87/outputFiles/preds',f"/home/tom/DSML125/outputFiles/preds")
+    subprocess.run("cp", "-R", "/home/tom/DSML125/DSML87/outputFiles/preds", "/home/tom/DSML125/outputFiles")
     os.makedirs("/home/tom/DSML125/outputFiles/final", exist_ok=True)
     os.makedirs("/home/tom/DSML125/outputFiles/final/done", exist_ok=True)
     return
