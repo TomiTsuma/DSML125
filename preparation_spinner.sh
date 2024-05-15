@@ -130,7 +130,7 @@ do
 done
 EOF
 
-
+wait
 
 ssh root@${IP} << 'EOF'
 while :
@@ -145,12 +145,10 @@ do
 done
 EOF
 
-ssh root@${IP} "inotifywait -e create /home/tom/DSML125/outputFiles/final" | while read -r directory event file; 
-do
-        echo "File $file was created in $directory"
-        scp -r root@${IP}:/home/tom/DSML125/outputFiles /home/tom/DSML125/outputFiles
-        break
-        # Add your custom logic here
-done
+scp -r root@${IP}:/home/tom/DSML125/outputFiles /home/tom/DSML125/outputFiles
+
+
+
+
 
 
