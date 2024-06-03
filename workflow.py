@@ -326,7 +326,7 @@ def evaluateResults():
 
 def call(modeling_instructions, phone_number, evaluation_instructions, version):
     gc.enable()
-    subprocess.run(['sudo', 'bash', '/home/tom/DSML125/r_installation.sh'])
+    # subprocess.run(['sudo', 'bash', '/home/tom/DSML125/r_installation.sh'])
 
     logging.basicConfig(filename='training.log', level=logging.INFO)
 
@@ -376,7 +376,7 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     # logging.info(f"Data Used", str(dataUsed))
 
     """Preliminary Actions"""
-    os.chdir(f"/home/tom/DSML125/outputFiles")
+    os.chdir(f"/home/tom/DSML125/outputFiles")9
     subprocess.run(['rm', '-rf', '/home/tom/DSML125/outputFiles'])
     
     os.chdir(f"/home/tom/DSML125/MSSC_DVC")
@@ -518,6 +518,7 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
                 
                 subset_test_samples[chem].extend([c for c in pd.read_csv(split, index_col=1).index])
             shutil.copyfile(str(split), f"/home/tom/DSML125/outputFiles/subsets/{project}/{str(split.name)}")
+    
     for c in chemicals:
         _chem_wet = wetchem[[c]].dropna()
         _chem_spc = spc.loc[spc.index.isin(_chem_wet.index)]
@@ -526,72 +527,11 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
         _chem_spc.to_csv(f'/home/tom/DSML125/DSML87/outputFiles/{c}_spc.csv')
     print("Splitting main")
 
-    gc.collect()
-    for spc_file in Path("/home/tom/DSML125/DSML87/outputFiles").rglob("**/*_spc.csv"):
-        train = pd.DataFrame()
-        test = pd.DataFrame()
-        valid = pd.DataFrame()
-        print(spc_file.name)
-        chemical_name = "_".join(spc_file.name.split("_")[:-1])
-        print(chemical_name)
-        _df = pd.read_csv(spc_file)
-        start = 0 
-        count = 1000
-        stop = count
-        for n in np.arange(start, len(_df), count):
-            print(start, ' to ', stop)
-            _df.iloc[start:stop].to_csv(f'/home/tom/DSML125/DSML87/outputFiles/{chemical_name}_spc.csv')
-            gc.collect()
-            subprocess.run(['sudo', 'Rscript', '/home/tom/DSML125/DSML87/splits.r', f'{chemical_name}'])
-            train = pd.concat([train, pd.read_csv(f"/home/tom/DSML125/DSML87/outputFiles/splits/{chemical_name}_train_sample_codes.csv")])
-            test = pd.concat([test, pd.read_csv(f"/home/tom/DSML125/DSML87/outputFiles/splits/{chemical_name}_test_sample_codes.csv")])
-            valid = pd.concat([valid, pd.read_csv(f"/home/tom/DSML125/DSML87/outputFiles/splits/{chemical_name}_valid_sample_codes.csv")])
-            stop = stop + count
-            start = start + count
-        train.to_csv(f"/home/tom/DSML125/outputFiles/{version}/splits/{chemical_name}_train_sample_codes.csv")
-        test.to_csv(f"/home/tom/DSML125/outputFiles/{version}/splits/{chemical_name}_test_sample_codes.csv")
-        valid.to_csv(f"/home/tom/DSML125/outputFiles/{version}/splits/{chemical_name}_valid_sample_codes.csv")
-        
 
-    files = [str(i.name) for i in Path(f"/home/tom/DSML125/outputFiles/{version}/splits").rglob("**/*sample_codes.csv")]
-    os.makedirs("/home/tom/DSML125/outputFiles/splits", exist_ok=True)
-    
-    for split_file in files:
-        path = f"/home/tom/DSML125/outputFiles/{version}/splits/{split_file}"
-        if(subset_test_samples == {}):
-            break
-        if("test" in split_file):
-            continue
-        chem = "_".join(split_file.split("_")[:-3])
-        samples = pd.read_csv(path)
-        samples_copy = samples.copy(deep=True)
-        # In train and valid, get samples that arent in the test set - Purely train
-        samples = samples.loc[~(samples.x.isin(subset_test_samples[chem]))]
-        print("Purely train: samples 1 {} {}".format(chem, len(samples)))
-        #In train and valid, get samples that are in the test set - Purely test
-        samples_copy = samples_copy.loc[samples_copy.x.isin(subset_test_samples[chem])]
-        print("Purely test: samples_copy 1 {} {}".format(chem, len(samples_copy)))
-
-
-        chem_test_splits = pd.read_csv(f"/home/tom/DSML125/outputFiles/{version}/splits/{chem}_test_sample_codes.csv")
-
-        chem_test_splits_copy = chem_test_splits.copy(deep=True)
-        #In the test set, get some samples that are the size of the train or valid set removed and arent in the test set ie the samples_copy - Purely train
-        chem_test_splits_copy = chem_test_splits_copy.loc[~(chem_test_splits_copy.x.isin(samples_copy.x))][0: len(samples_copy)]
-        print("Purely train: chem_test_splits_copy 1 {} {}".format(chem, len(chem_test_splits_copy)))
-        #Get the remaining samples in the test set - Purely test
-        chem_test_splits = chem_test_splits.loc[~chem_test_splits.x.isin(chem_test_splits_copy.x)]
-        print("Purely test: chem_test_splits 1 {} {}".format(chem, len(chem_test_splits)))
-        
-
-        samples = pd.concat([samples, chem_test_splits_copy])
-        print("Purely train: samples 2 {} {}".format(chem, len(samples)))
-        chem_test_splits = pd.concat([chem_test_splits, samples_copy])
-        print("Purely test: chem_test_splits 2 {} {}".format(chem, len(chem_test_splits)))
-        
-        print(split_file)
-        samples.to_csv(f"/home/tom/DSML125/outputFiles/{version}/splits/{split_file}")
-        chem_test_splits.to_csv(f"/home/tom/DSML125/outputFiles/{version}/splits/{chem}_test_sample_codes.csv")
+    subprocess.run(['sudo', 'Rscript', '/home/tom/DSML125/DSML87/splits.r', f'{chemical_name}'])
+    for j in [i for i in Path("/home/tom/DSML125/DSML87/outputFiles/splits").rglob("**/*sample_codes.csv")]:
+        shutil.copytree(str(j), "/home/tom/DSML125/outputFiles/splits")
+        shutil.copytree(str(j), "/home/tom/DSML125/MSSC_DVC/splits")
 
 
     """Move Data to output files"""
@@ -601,64 +541,65 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     shutil.copy("./DSML87/outputFiles/wetchem.csv",
                 "/home/tom/DSML125/outputFiles/wetchem/wetchem.csv")
 
-    os.makedirs(f"inputFiles/models_in_production/{version}", exist_ok=True)
-    try:
-        shutil.copytree(f"/home/tom/DSML125/outputFiles/{version}/splits",
-                        f"/home/tom/DSML125/inputFiles/models_in_production/{version}")
-    except Exception as e:
-        logging.info(e)
+    # os.makedirs(f"inputFiles/models_in_production/{version}", exist_ok=True)
+    # try:
+    #     shutil.copytree(f"/home/tom/DSML125/outputFiles/{version}/splits",
+    #                     f"/home/tom/DSML125/inputFiles/models_in_production/{version}")
+    # except Exception as e:
+    #     logging.info(e)
   
-    """Zip data and push"""
-    try:
-        shutil.copytree("/home/tom/DSML125/outputFiles/spc", "/home/tom/DSML125/MSSC_DVC/spc")
-    except Exception as e:
-        logging.info(e)
+    # """Zip data and push"""
+    # try:
+    #     shutil.copytree("/home/tom/DSML125/outputFiles/spc", "/home/tom/DSML125/MSSC_DVC/spc")
+    # except Exception as e:
+    #     logging.info(e)
 
-    try:
-        shutil.copytree("/home/tom/DSML125/outputFiles/wetchem", "/home/tom/DSML125/MSSC_DVC/wetchem")
-    except Exception as e:
-        logging.info(e)
+    # try:
+    #     shutil.copytree("/home/tom/DSML125/outputFiles/wetchem", "/home/tom/DSML125/MSSC_DVC/wetchem")
+    # except Exception as e:
+    #     logging.info(e)
 
-    try:
-        shutil.copytree(f"/home/tom/DSML125/outputFiles/{version}/splits", "/home/tom/DSML125/MSSC_DVC")
-    except Exception as e:
-        logging.info(e)
+    # try:
+    #     shutil.copytree(f"/home/tom/DSML125/outputFiles/{version}/splits", "/home/tom/DSML125/MSSC_DVC")
+    # except Exception as e:
+    #     logging.info(e)
 
-    try:
-        shutil.copytree("/home/tom/DSML125/QC_Model_Predictions/dl_models_all_chems_20210414/v2.2", "/home/tom/DSML125/MSSC_DVC/model")
-    except Exception as e:
-        logging.info(e)
+    # try:
+    #     shutil.copytree("/home/tom/DSML125/QC_Model_Predictions/dl_models_all_chems_20210414/v2.2", "/home/tom/DSML125/MSSC_DVC/model")
+    # except Exception as e:
+    #     logging.info(e)
 
-    logging.info(
-        f"These are the spectra {len(pd.read_csv('/home/tom/DSML125/MSSC_DVC/spc/spc.csv', engine='c'))}")
-    logging.info(
-        f"These are the wetchem {len(pd.read_csv('/home/tom/DSML125/MSSC_DVC/wetchem/wetchem.csv'))}")
+    # logging.info(
+    #     f"These are the spectra {len(pd.read_csv('/home/tom/DSML125/MSSC_DVC/spc/spc.csv', engine='c'))}")
+    # logging.info(
+    #     f"These are the wetchem {len(pd.read_csv('/home/tom/DSML125/MSSC_DVC/wetchem/wetchem.csv'))}")
 
 
-    for j in [i for i in Path("/home/tom/DSML125/inputFiles").rglob("**/*subset.csv")]:
-        shutil.copyfile(j,f"/home/tom/DSML125/outputFiles/{today}_subset_{version}.csv")
+    # for j in [i for i in Path("/home/tom/DSML125/inputFiles").rglob("**/*subset.csv")]:
+    #     shutil.copyfile(j,f"/home/tom/DSML125/outputFiles/{today}_subset_{version}.csv")
 
-    for j in [i for i in Path(f"/home/tom/DSML125/outputFiles/{version}").rglob("**/*sample_codes.csv")]:
-        shutil.copyfile(j,f"/home/tom/DSML125/MSSC_DVC/{j.name}")
-    shutil.copyfile("/home/tom/DSML125/inputFiles/model_evaluation.csv",f"/home/tom/DSML125/outputFiles/{today}_model_evaluation_{version}.csv")
-    shutil.copyfile("/home/tom/DSML125/inputFiles/modeling-instructions.csv",f"/home/tom/DSML125/outputFiles/{today}_modeling-instructions_{version}.csv")
-    shutil.copyfile("/home/tom/DSML125/inputFiles/uncleaned_wetchem.csv",f"/home/tom/DSML125/outputFiles/{today}_uncleaned_wetchem_{version}.csv")
-    # subprocess.run(["rm","-rf",f"/home/tom/DSML125/outputFiles/{version}"])
-    # shutil.copytree("/home/tom/DSML125/MSSC_DVC/splits",f"/home/tom/DSML125/outputFiles/{version}")
-    shutil.copyfile("/home/tom/DSML125/DSML87/outputFiles/dl_outliers.csv",f"/home/tom/DSML125/outputFiles/{today}_dl_outliers_{version}.csv")
-    shutil.copyfile("/home/tom/DSML125/DSML87/outputFiles/dl_outliers.csv",f"/home/tom/DSML125/outputFiles/{today}_hv_outliers_{version}.csv")
-    shutil.copyfile("/home/tom/DSML125/DSML87/outputFiles/dl_outliers.csv",f"/home/tom/DSML125/outputFiles/{today}_lv_outliers_{version}.csv")
-    shutil.copyfile('/home/tom/DSML125/DSML87/outputFiles/wetchem.csv',f"/home/tom/DSML125/outputFiles/{today}_wetchem_{version}.csv")  
-    shutil.copytree('/home/tom/DSML125/DSML87/outputFiles/preds',"/home/tom/DSML125/outputFiles/preds")
-    os.makedirs("/home/tom/DSML125/outputFiles/final", exist_ok=True)
-    os.makedirs("/home/tom/DSML125/outputFiles/final/done", exist_ok=True)
-    return
-    os.chdir(f"{os.getcwd()}/MSSC_DVC")
-    subprocess.run(['zip', '-r', 'data.zip', 'spc',
-                   'wetchem', 'splits', 'model'], check=True)
+    # for j in [i for i in Path(f"/home/tom/DSML125/outputFiles/{version}").rglob("**/*sample_codes.csv")]:
+    #     shutil.copyfile(j,f"/home/tom/DSML125/MSSC_DVC/{j.name}")
+    # shutil.copyfile("/home/tom/DSML125/inputFiles/model_evaluation.csv",f"/home/tom/DSML125/outputFiles/{today}_model_evaluation_{version}.csv")
+    # shutil.copyfile("/home/tom/DSML125/inputFiles/modeling-instructions.csv",f"/home/tom/DSML125/outputFiles/{today}_modeling-instructions_{version}.csv")
+    # shutil.copyfile("/home/tom/DSML125/inputFiles/uncleaned_wetchem.csv",f"/home/tom/DSML125/outputFiles/{today}_uncleaned_wetchem_{version}.csv")
+    # # subprocess.run(["rm","-rf",f"/home/tom/DSML125/outputFiles/{version}"])
+    # # shutil.copytree("/home/tom/DSML125/MSSC_DVC/splits",f"/home/tom/DSML125/outputFiles/{version}")
+    # shutil.copyfile("/home/tom/DSML125/DSML87/outputFiles/dl_outliers.csv",f"/home/tom/DSML125/outputFiles/{today}_dl_outliers_{version}.csv")
+    # shutil.copyfile("/home/tom/DSML125/DSML87/outputFiles/dl_outliers.csv",f"/home/tom/DSML125/outputFiles/{today}_hv_outliers_{version}.csv")
+    # shutil.copyfile("/home/tom/DSML125/DSML87/outputFiles/dl_outliers.csv",f"/home/tom/DSML125/outputFiles/{today}_lv_outliers_{version}.csv")
+    # shutil.copyfile('/home/tom/DSML125/DSML87/outputFiles/wetchem.csv',f"/home/tom/DSML125/outputFiles/{today}_wetchem_{version}.csv")  
+    # shutil.copytree('/home/tom/DSML125/DSML87/outputFiles/preds',"/home/tom/DSML125/outputFiles/preds")
+    # os.makedirs("/home/tom/DSML125/outputFiles/final", exist_ok=True)
+    # os.makedirs("/home/tom/DSML125/outputFiles/final/done", exist_ok=True)
+    # return
+    # os.chdir(f"{os.getcwd()}/MSSC_DVC")
+    # subprocess.run(['zip', '-r', 'data.zip', 'spc',
+    #                'wetchem', 'splits', 'model'], check=True)
+    
 
-    subprocess.run(['bash', 'dvc_setup.sh'])
-    os.chdir("../")
+    # subprocess.run(['bash', 'dvc_setup.sh'])
+    # os.chdir("../")
 
     """Run model optimization update"""
 
@@ -672,7 +613,7 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
             branch = 'defaultPaths-Model-Update'
         os.chdir("/home/tom/DSML125/dl")
         subprocess.run(['git', 'checkout', branch])
-        subprocess.run(['git', 'pull', 'origin'])
+        # subprocess.run(['git', 'pull', 'origin'])
 
         command = ["bash", f"{os.getcwd()}/dl_spinner.sh", chem]
         ip = subprocess.check_output(command, universal_newlines=True)
