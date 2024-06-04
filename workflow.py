@@ -527,8 +527,8 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
         _chem_spc.to_csv(f'/home/tom/DSML125/DSML87/outputFiles/{c}_spc.csv')
     print("Splitting main")
 
-
-    subprocess.run(['sudo', 'Rscript', '/home/tom/DSML125/DSML87/splits.r', f'{chemical_name}'])
+    for chemical_name in chemicals:
+        subprocess.run(['sudo', 'Rscript', '/home/tom/DSML125/DSML87/splits.r', f'{chemical_name}'])
     for j in [i for i in Path("/home/tom/DSML125/DSML87/outputFiles/splits").rglob("**/*sample_codes.csv")]:
         shutil.copytree(str(j), "/home/tom/DSML125/outputFiles/splits")
         shutil.copytree(str(j), "/home/tom/DSML125/MSSC_DVC/splits")
