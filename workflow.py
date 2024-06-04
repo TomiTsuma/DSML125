@@ -530,8 +530,8 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     for chemical_name in chemicals:
         subprocess.run(['sudo', 'Rscript', '/home/tom/DSML125/DSML87/splits.r', f'{chemical_name}'])
     for j in [i for i in Path("/home/tom/DSML125/DSML87/outputFiles/splits").rglob("**/*sample_codes.csv")]:
-        shutil.copytree(str(j), "/home/tom/DSML125/outputFiles/splits")
-        shutil.copytree(str(j), "/home/tom/DSML125/MSSC_DVC/splits")
+        shutil.copyfile(str(j), "/home/tom/DSML125/outputFiles/splits")
+        shutil.copyfile(str(j), "/home/tom/DSML125/MSSC_DVC/splits")
 
 
     """Move Data to output files"""
