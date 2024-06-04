@@ -376,7 +376,7 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     # logging.info(f"Data Used", str(dataUsed))
 
     """Preliminary Actions"""
-    os.chdir(f"/home/tom/DSML125/outputFiles")9
+    os.chdir(f"/home/tom/DSML125/outputFiles")
     subprocess.run(['rm', '-rf', '/home/tom/DSML125/outputFiles'])
     
     os.chdir(f"/home/tom/DSML125/MSSC_DVC")
