@@ -361,17 +361,17 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
         i.split("-") for i in modelsUsed] for i in j] if version not in modelsAvailable]
 
  
-    # if (len(dataUnavailable) > 0):
-    #     for phone in phone_numbers:
-    #         print(phone)
-    #         subprocess.run(["python", "sms.py", "--phone", f"{phone}", "--message",
-    #                        f"The following data is unavailable {str(','.join(dataUnavailable))}"])
-    #     return
-    # if (len(modelsUnavailable) > 0):
-    #     for phone in phone_numbers:
-    #         subprocess.run(["python", "sms.py", "--phone", f"{phone}", "--message",
-    #                        f"The following models are unavailable {str(','.join(modelsUnavailable))}"])
-    #     return
+    if (len(dataUnavailable) > 0):
+        for phone in phone_numbers:
+            print(phone)
+            subprocess.run(["python", "sms.py", "--phone", f"{phone}", "--message",
+                           f"The following data is unavailable {str(','.join(dataUnavailable))}"])
+        return
+    if (len(modelsUnavailable) > 0):
+        for phone in phone_numbers:
+            subprocess.run(["python", "sms.py", "--phone", f"{phone}", "--message",
+                           f"The following models are unavailable {str(','.join(modelsUnavailable))}"])
+        return
     logging.info(f"Data Used", str(dataUsed))
 
     """Preliminary Actions"""
@@ -592,39 +592,39 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     os.makedirs("/home/tom/DSML125/outputFiles/final", exist_ok=True)
     os.makedirs("/home/tom/DSML125/outputFiles/final/done", exist_ok=True)
     return
-    os.chdir(f"{os.getcwd()}/MSSC_DVC")
-    subprocess.run(['zip', '-r', 'data.zip', 'spc',
-                   'wetchem', 'splits', 'model'], check=True)
+    # os.chdir(f"{os.getcwd()}/MSSC_DVC")
+    # subprocess.run(['zip', '-r', 'data.zip', 'spc',
+    #                'wetchem', 'splits', 'model'], check=True)
     
 
-    subprocess.run(['bash', 'dvc_setup.sh'])
-    os.chdir("../")
+    # subprocess.run(['bash', 'dvc_setup.sh'])
+    # os.chdir("../")
 
-    """Run model optimization update"""
+    # """Run model optimization update"""
 
-    ips = []
-    for chem, instructs in zip(chemicals, instructions):
-        print(instructs)
-        print(chem)
-        if (instructs == 'optimize'):
-            branch = 'default-args'
-        else:
-            branch = 'defaultPaths-Model-Update'
-        os.chdir("/home/tom/DSML125/dl")
-        subprocess.run(['git', 'checkout', branch])
-        # subprocess.run(['git', 'pull', 'origin'])
+    # ips = []
+    # for chem, instructs in zip(chemicals, instructions):
+    #     print(instructs)
+    #     print(chem)
+    #     if (instructs == 'optimize'):
+    #         branch = 'default-args'
+    #     else:
+    #         branch = 'defaultPaths-Model-Update'
+    #     os.chdir("/home/tom/DSML125/dl")
+    #     subprocess.run(['git', 'checkout', branch])
+    #     # subprocess.run(['git', 'pull', 'origin'])
 
-        command = ["bash", f"{os.getcwd()}/dl_spinner.sh", chem]
-        ip = subprocess.check_output(command, universal_newlines=True)
-        ip = ip.split('\n')[-2]
-        ips.append(ip)
-    print(ips)
-    os.chdir("/home/tom/DSML125")
+    #     command = ["bash", f"{os.getcwd()}/dl_spinner.sh", chem]
+    #     ip = subprocess.check_output(command, universal_newlines=True)
+    #     ip = ip.split('\n')[-2]
+    #     ips.append(ip)
+    # print(ips)
+    # os.chdir("/home/tom/DSML125")
 
     # for ip, chemical in zip(ips, chemicals):
     #     subprocess.run(["bash", "remotedatacollector.sh",
     #                    "--chemical", chemical, "--server", ip, "--version", version])
-    return
+    # return
     print(dataUsed)
     print(modelsUsed)
 
