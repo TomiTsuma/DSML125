@@ -364,12 +364,12 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     if (len(dataUnavailable) > 0):
         for phone in phone_numbers:
             print(phone)
-            subprocess.run(["python", "sms.py", "--phone", f"{phone}", "--message",
+            subprocess.run(["python3", "sms.py", "--phone", f"{phone}", "--message",
                            f"The following data is unavailable {str(','.join(dataUnavailable))}"])
         return
     if (len(modelsUnavailable) > 0):
         for phone in phone_numbers:
-            subprocess.run(["python", "sms.py", "--phone", f"{phone}", "--message",
+            subprocess.run(["python3", "sms.py", "--phone", f"{phone}", "--message",
                            f"The following models are unavailable {str(','.join(modelsUnavailable))}"])
         return
     logging.info(f"Data Used", str(dataUsed))
