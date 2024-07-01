@@ -24,19 +24,15 @@ runcmd:
   - cd /home/tom
   - git config --global user.name "TomiTsuma"
   - git config --global user.email "tommytsuma7@gmail.com"
-  - git clone https://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@github.com/TomiTsuma/DSML125.git DSML125
-  - wait
-  - cd DSML125
-  - export AWS_ACCESS_KEY_ID=DO00JVCF7VU9NR8R9KUC
-  - export AWS_SECRET_ACCESS_KEY=qw7fwzXbo90pYNVgybQbodide616IklbcR21y6G8EOI
-  - export USERNAME=tom
-  - sudo bash odbc_install.sh
-  - bash repos.sh
-  - mkdir DSML87/inputFiles
-  - mkdir outputFiles
-  - sudo bash r_installation.sh
-  - sudo bash vpn_con.sh
+  - git clone https://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@github.com/Cropnuts/deep-learning-optimizer.git dl
+  - cd dl
+  - git checkout default-args
+  - pip install -r requirements.txt
+  - mkdir data_input
+  - scp -r root@188.166.2.93:/home/tom/DSML155/input /home/tom/data_input
   - wait
   - sudo apt-get install python3
   - sudo apt -yq install python3-pip
-  - python3 -m pip install -r requirements.txt
+  - python3 optimize.py --trials 30 --chemical sand --opts 100 --epochs 200  --spc-path /home/tom/data_input/base_optimize/spc/spc.csv --wet-path /home/tom/data_input/base_optimize/wetchem/wetchem.csv --splits-dir /home/tom/data_input/base_optimize/splits --base-dir /home/tom/data_input/base_optimize
+  - python3 optimize.py --trials 30 --chemical sand --opts 100 --epochs 200  --spc-path /home/tom/data_input/spike_50_optimize/spc/spc.csv --wet-path /home/tom/data_input/spike_50_optimize/wetchem/wetchem.csv --splits-dir /home/tom/data_input/spike_50_optimize/splits --base-dir /home/tom/data_input/spike_50_optimize
+  - python3 optimize.py --trials 30 --chemical sand --opts 100 --epochs 200  --spc-path /home/tom/data_input/spike_250_optimize/spc/spc.csv --wet-path /home/tom/data_input/spike_250_optimize/wetchem/wetchem.csv --splits-dir /home/tom/data_input/spike_250_optimize/splits --base-dir /home/tom/data_input/spike_250_optimize
