@@ -333,6 +333,7 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     modelingInstructions = pd.read_csv(modeling_instructions)
     chemicals = modelingInstructions['chemical']
     instructions = modelingInstructions['instructions']
+    
 
     phone_numbers = pd.read_csv(phone_number)
     phone_numbers = phone_numbers['phone']
@@ -463,13 +464,14 @@ def call(modeling_instructions, phone_number, evaluation_instructions, version):
     """
     Make Predictions
     """
+    print("These are the chemicals", chemicals)
     predict_chems('QC_Model_Predictions/dl_models_all_chems_20210414/v2.2',
-                  'DSML87/outputFiles/preds', chems, [version], pd.read_csv('/home/tom/DSML125/outputFiles/spectraldata.csv', index_col=0))
+                  'DSML87/outputFiles/preds', chemicals, [version], pd.read_csv('/home/tom/DSML125/outputFiles/spectraldata.csv', index_col=0))
 
     os.makedirs("/home/tom/DSML125/DSML87/outputFiles/splits", exist_ok=True)
     os.makedirs("/home/tom/DSML125/DSML87/outputFiles/rds", exist_ok=True)
     """Residual Outliers"""
-    residual_outliers(chems, version)
+    residual_outliers(chemicals, version)
     """High Low Value Filter"""
     run_notebook('DSML87', 'high_low_value_filter.ipynb')
     """Mark Outliers"""
